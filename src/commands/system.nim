@@ -18,7 +18,7 @@ proc info*() =
     printFancy("Hostname", res["system"]["hostname"].getStr())
     printFancy("Operating System (Pretty)", res["system"]["osPrettyName"].getStr())
     printFancy("Operating System", res["system"]["os"].getStr())
-    printFancy("Package Manager", res["system"]["packageManager"].getStr())
+    printFancy("Package Managers", $res["system"]["packageManagers"])
     printFancy("Init System", res["system"]["initSystem"].getStr())
     printFancy("Platform", res["system"]["platform"].getStr())
     printFancy("CPU Architecture", res["system"]["arch"].getStr())
@@ -28,3 +28,23 @@ proc info*() =
     printFancy("Disks", "TBD")
     
 
+proc run*(command: string, daemon = false) =
+   ## Run a command.
+   var client = newHttpClient()
+   var res: JsonNode
+   let body = %*{
+       "cmd": command,
+       "daemon": daemon
+   }
+   
+   try:
+      res = parseJson(client.postContent("http://localhost:5000/api/v1/system/run", $body))
+   finally:
+      client.close()
+
+   if daemon:
+      printFancy("Command",  res["command"].getStr())
+      printFancy("Process ID", $res["PID"])
+   else:
+      echo res["output"].getStr()
+      quit(res["exitCode"].getInt())

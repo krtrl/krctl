@@ -21,14 +21,17 @@ proc runList() =
     ## krtrl runList management
     echo "WIP"
 
-dispatchMultiGen([ "sys" ], [ info, mergeNames = @[ "krctl", "system" ]])
+dispatchMultiGen(
+    [ "sys" ], [ info, mergeNames = @[ "krctl", "system" ]],
+    [ "sys" ], [ run, mergeNames = @[ "krctl", "system" ]]
+)
 
 dispatchMulti(
     [
         sys,
         doc = "System management", 
         usage = "$doc\n", 
-        stopWords = @["info"],
+        stopWords = @["info", "run"],
         cmdName = "system"
     ],
     [container], 
