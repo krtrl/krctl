@@ -2,16 +2,13 @@ import cligen
 import std/httpclient
 import commands/system
 import commands/server
+import commands/service
 
 proc configure(url: string, port = 5000) =
     ## Configure krctl.
 
 proc container() =
     ## Container management
-    echo "WIP"
-
-proc service() =
-    ## Service management
     echo "WIP"
 
 proc checkUp() =
@@ -23,13 +20,17 @@ proc runList() =
     echo "WIP"
 
 dispatchMultiGen(
-    [ "sys" ], [ info, mergeNames = @[ "krctl", "system" ]],
-    [ "sys" ], [ run, mergeNames = @[ "krctl", "system" ]]
+    [ "sys" ], [ system.info, mergeNames = @[ "krctl", "system" ]],
+    [ "sys" ], [ system.run, mergeNames = @[ "krctl", "system" ]]
 )
 
 dispatchMultiGen(
     [ "srver" ], [ server.create, mergeNames = @[ "krctl", "server" ]],
     [ "srver" ], [ server.delete, mergeNames = @[ "krctl", "server" ]]
+)
+
+dispatchMultiGen(
+    [ "srvice" ], [ servinfo, mergeNames = @[ "krctl", "service" ], cmdName = "status"]
 )
 
 dispatchMulti(
@@ -47,8 +48,14 @@ dispatchMulti(
         stopWords = @["create", "delete"],
         cmdName = "server"
     ],
+    [
+        srvice,
+        doc = "Service management",
+        usage = "$doc\n",
+        stopWords = @["status"],
+        cmdName = "service"
+    ],
     [container], 
-    [service], 
-    [checkUp], 
+    [checkUp],
     [runList]
 )
